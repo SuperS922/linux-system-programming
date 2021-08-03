@@ -2,6 +2,7 @@
 /*
 !include/
 !src/
+!makefile
 !*.cpp
 !*.hpp
 !*h
