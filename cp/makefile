@@ -1,6 +1,6 @@
 src=$(wildcard ./src/*.cpp)
 main=$(wildcard ./*.cpp)
-obj=$(patsubst ./%.o, ./%.cpp, $(src)) $(main)
+obj=$(patsubst ./%.o, ./%.cpp, $(src) $(main)) 
 include=./include
 CC=g++
 target=main
