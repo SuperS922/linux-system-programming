@@ -1,0 +1,15 @@
+# Ignore executable files
+/*
+!include/
+!src/
+!*.cpp
+!*.hpp
+!*h
+!.gitignore
+!.markdown
+
+# Ignore .json files.
+*.json
+
+# Ignore .vscode dir.
+/.vscode
