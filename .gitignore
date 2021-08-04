@@ -1,5 +1,5 @@
-*
-!*.c*
-!*.h*
-!makefile
-!.gitignore
+# ignore the setting directory
+.vscode
+
+# ignore the executable file
+*main

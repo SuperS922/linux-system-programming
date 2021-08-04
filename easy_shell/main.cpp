@@ -45,15 +45,43 @@ void myPrint(string str)
 
 void recInput(list<string> &command)
 {
-
-    string str;
-
     cout << "Please input the command:" << endl;
-    while (cin >> str)
+
+    char c_temp;
+    string s_temp;
+    bool flag = false;
+
+    while (true)
     {
-        command.push_back(str);
-        if (cin.get() == '\n') // end of input
-            break;
+        c_temp = cin.get();
+        if (c_temp == ' ' || c_temp == '\n')
+        {
+            if (flag == false)
+            {
+                if (c_temp == '\n')
+                {
+                    // end of input
+                    break;
+                }
+                continue;
+            }
+            else
+            {
+                flag = false;
+                command.push_back(s_temp);
+                s_temp.clear();
+                if (c_temp == '\n')
+                {
+                    // end of input
+                    break;
+                }
+            }
+        }
+        else
+        {
+            flag = true;
+            s_temp += c_temp;
+        }
     }
 }
 
