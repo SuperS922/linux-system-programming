@@ -3,3 +3,5 @@
 
 # ignore the executable file
 *main
+
+*.txt

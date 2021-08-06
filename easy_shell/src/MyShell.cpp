@@ -4,10 +4,24 @@
 using namespace std;
 #endif
 
+MyCommand::MyCommand()
+{
+}
+
+void MyCommand::clear()
+{
+    this->cmd.clear();
+
+    this->left = false;
+    this->right = false;
+}
+
+MyCommand::~MyCommand() {}
+
 MyShell::MyShell()
 {
     this->m_temp.clear();
-    this->m_map.clear();
+    this->m_cmd_list.clear();
     this->m_flag = false;
     this->m_cmd.clear();
     this->m_pid = 0;
@@ -34,6 +48,43 @@ void MyShell::printError(char *c)
     exit(0);
 }
 
+void MyShell::pushTemp()
+{
+    if (this->m_flag == true)
+    {
+        this->m_cmd.cmd.push_back(this->m_temp);
+        this->m_temp.clear();
+        this->m_flag = false;
+    }
+}
+
+void MyShell::split(const char &c)
+{
+    switch (c)
+    {
+    case ' ':
+        this->pushTemp();
+        break;
+    case '>':
+        this->m_cmd.right = true;
+        this->pushTemp();
+        break;
+    case '<':
+        this->m_cmd.left = true;
+        this->pushTemp();
+        break;
+    // case '|':
+    //     /* code */
+    //     break;
+    default:
+    {
+        this->m_flag = true;
+        this->m_temp += c;
+    }
+    break;
+    }
+}
+
 void MyShell::recInput()
 {
     cout << "Please input the command:" << endl;
@@ -44,43 +95,14 @@ void MyShell::recInput()
     this->m_cmd.clear();
     this->m_temp.clear();
     this->m_flag = false;
+    this->m_cmd_list.clear();
 
     for (string::iterator it = str.begin(); it < str.end(); it++)
     {
-        switch (*it)
-        {
-        case ' ':
-        {
-            if (this->m_flag == true)
-            {
-                this->m_cmd.push_back(this->m_temp);
-                this->m_temp.clear();
-                this->m_flag = false;
-            }
-        }
-        break;
-        // case '>':
-        //     /* code */
-        //     break;
-        // case '<':
-        //     /* code */
-        //     break;
-        // case '|':
-        //     /* code */
-        //     break;
-        default:
-        {
-            this->m_flag = true;
-            this->m_temp += *it;
-        }
-        break;
-        }
+        this->split(*it);
     }
     // deal with the end of input
-    if (this->m_flag == true)
-    {
-        this->m_cmd.push_back(this->m_temp);
-    }
+    this->pushTemp();
 }
 
 MyShell::~MyShell() {}

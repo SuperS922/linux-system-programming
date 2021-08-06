@@ -4,11 +4,23 @@
 #include <list>
 #include <sys/types.h>
 #include <unistd.h>
-#include <functional>
-#include <map>
 #include <sys/wait.h>
 
 using namespace std;
+
+struct MyCommand
+{
+    list<string> cmd;
+
+    bool left;
+    bool right;
+
+    MyCommand();
+
+    void clear();
+
+    ~MyCommand();
+};
 
 class MyShell
 {
@@ -19,6 +31,10 @@ public:
 
     void printError(char *c);
 
+    void split(const char &c);
+
+    void pushTemp();
+
     void recInput();
 
     ~MyShell();
@@ -26,10 +42,10 @@ public:
 public:
     pid_t m_pid;
 
-    list<string> m_cmd;
+    MyCommand m_cmd;
 
 private:
-    map<int, list<string>> m_map;
+    list<MyCommand> m_cmd_list;
 
     string m_temp;
     bool m_flag;
