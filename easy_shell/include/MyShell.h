@@ -29,7 +29,7 @@ public:
     MyShell();
     void myWait(pid_t pid);
 
-    void printError(char *c);
+    void printError(const char *c);
 
     void split(const char &c);
 
@@ -42,11 +42,10 @@ public:
 public:
     pid_t m_pid;
 
-    MyCommand m_cmd;
-
-private:
     list<MyCommand> m_cmd_list;
 
+private:
+    MyCommand m_cmd;
     string m_temp;
     bool m_flag;
 };

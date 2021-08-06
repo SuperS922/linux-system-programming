@@ -42,7 +42,7 @@ void MyShell::myWait(pid_t m_pid)
     }
 }
 
-void MyShell::printError(char *c)
+void MyShell::printError(const char *c)
 {
     perror(c);
     exit(0);
@@ -73,9 +73,11 @@ void MyShell::split(const char &c)
         this->m_cmd.left = true;
         this->pushTemp();
         break;
-    // case '|':
-    //     /* code */
-    //     break;
+    case '|':
+        this->pushTemp();
+        this->m_cmd_list.push_back(this->m_cmd);
+        this->m_cmd.clear();
+        break;
     default:
     {
         this->m_flag = true;
@@ -103,6 +105,7 @@ void MyShell::recInput()
     }
     // deal with the end of input
     this->pushTemp();
+    this->m_cmd_list.push_back(this->m_cmd);
 }
 
 MyShell::~MyShell() {}
