@@ -42,8 +42,9 @@ make        # 编译，得到可执行文件 main
 ./main      # 运行可执行文件
 
 # 示例命令
-tree ../ > test.txt | cat < test.txt | grep main    
+ls -l -a ../ | grep .* | grep git* | grep ignore    
 ```
 结果如下所示：
 
-![result](https://user-images.githubusercontent.com/32126755/128477977-6e1c16df-cde4-45b1-9ef1-78c02a1866f3.png)
+![result](https://user-images.githubusercontent.com/32126755/128508953-a2d335af-a2ce-4891-933a-ba3a0ed12b52.png)
+
