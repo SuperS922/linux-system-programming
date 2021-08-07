@@ -3,5 +3,7 @@
 
 # ignore the executable file
 *main
+*server
+*client
 
 *.txt

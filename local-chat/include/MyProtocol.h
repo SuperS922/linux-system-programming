@@ -1,6 +1,8 @@
 #define PUBLIC_FIFO "publicFifo"
 #define PUBLIC_FIFO_SIZE 4096
 
+#include <string.h>
+
 using namespace std;
 
 struct MyProtocol

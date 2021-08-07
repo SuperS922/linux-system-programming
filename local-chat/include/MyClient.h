@@ -36,13 +36,15 @@ private:
 
     void chat();
 
-    void exit();
+    void myExit();
 
     void exitConnect();
 
 private:
     int write_fd;
     int read_fd;
+
+    string temp_fifo_name;
 
     bool is_connect;
 

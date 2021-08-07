@@ -65,9 +65,11 @@ void MyClient::connect()
 {
     this->m_writemp.pro_num = 1;
 
-    char *dirname = getenv("PWD");
+    string dirname = getenv("PWD");
 
-    char *pathname = strcat(strcat(dirname, (char *)"./fifo"), to_string(this->m_writemp.src).c_str());
+    this->temp_fifo_name = dirname + "/fifo" + to_string(this->m_writemp.src);
+
+    char *pathname = (char *)this->temp_fifo_name.c_str();
 
     // 新建一个fifo
     int temp = mkfifo(pathname, 0664);
@@ -78,7 +80,6 @@ void MyClient::connect()
 
     // 绑定私有fifo的读端
     read_fd = open(pathname, O_RDONLY | O_NONBLOCK);
-    unlink(pathname);
 
     // 把文件名传给 server
     strcpy(this->m_writemp.data, pathname);
@@ -139,27 +140,66 @@ void MyClient::chat()
         return;
     }
 
-    fcntl(STDIN_FILENO, O_NONBLOCK);
-    char *msg;
-    cout << "Send to " << this->m_writemp.dst << ":\t";
+    int state = fcntl(STDIN_FILENO, F_GETFL);
+    fcntl(STDIN_FILENO, F_SETFL, state | O_NONBLOCK);
+
+    cout << "------------------ Welcome to local chat room ------------------" << endl;
+    cout << "------------------ Press ESC to close         ------------------" << endl;
+
+    char c;
     while (true)
     {
+        char msg[4084];
+
         int len = read(read_fd, &this->m_readmp, sizeof(this->m_readmp));
+
         if (len > 0)
         {
-            cout << "From " << this->m_readmp.src << ":\t" << this->m_readmp.data << endl;
+            if (this->m_readmp.pro_num == 4)
+            {
+                cout << this->m_readmp.src << " is not online." << endl;
+                continue;
+            }
+
+            cout << "From " << this->m_readmp.src << ":\t";
+            string str = this->m_readmp.data;
+            for (string::iterator it = str.begin(); it != str.end(); it++)
+            {
+                cout << *it;
+                if (*it == '\n' || *it == '\0')
+                {
+                    break;
+                }
+            }
         }
 
-        len = read(STDIN_FILENO, msg, sizeof(this->m_writemp));
-        if (len <= 0)
+        len = read(STDIN_FILENO, msg, sizeof(msg));
+        if (len == -1)
         {
-            break;
+            continue;
         }
-
-        this->send(msg);
+        else if (len > 0)
+        {
+            this->send(msg);
+            cout << "Send to " << this->m_writemp.dst << ":\t";
+            string str = msg;
+            for (string::iterator it = str.begin(); it != str.end(); it++)
+            {
+                cout << *it;
+                if (*it == '\n' || *it == '\0')
+                {
+                    break;
+                }
+                else if (*it == 27)
+                {
+                    fcntl(STDIN_FILENO, F_SETFL, state);
+                    return;
+                }
+            }
+            cout << endl;
+        }
     }
-
-    cout << "chat finished." << endl;
+    cout << "chat finish" << endl;
 }
 
 void MyClient::send(const char *msg)
@@ -175,7 +215,7 @@ void MyClient::send(const char *msg)
     }
 }
 
-void MyClient::exit()
+void MyClient::myExit()
 {
     this->m_writemp.pro_num = 5;
     int len = write(write_fd, &this->m_writemp, sizeof(this->m_writemp));
@@ -186,6 +226,9 @@ void MyClient::exit()
 
     this->is_connect = false;
     close(read_fd);
+
+    // 删除临时的 fifo 文件
+    unlink(this->temp_fifo_name.c_str());
 }
 
 void MyClient::exitConnect()
@@ -197,7 +240,7 @@ void MyClient::exitConnect()
         cin.get();
         return;
     }
-    this->exit();
+    this->myExit();
 }
 
 void MyClient::showMenu()
@@ -241,7 +284,7 @@ void MyClient::run()
             this->exitConnect();
             break;
         case 0:
-            exit();
+            exit(0);
             break;
         default:
             break;
