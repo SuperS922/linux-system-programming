@@ -85,7 +85,7 @@ ls -l -a ../ | grep .* | grep git* | grep ignore
 #### 2. 服务器端
 1. 打开公共fifo，阻塞等待读		
 
-	<font color=blue>公共fifo的文件名定义在 `include/MyProtocal.h` 中，使用前请先创建fifo</font>
+	公共fifo的文件名定义在 `include/MyProtocal.h` 中，使用前请先创建fifo
 
 	`mkfifo fifoname`
     
