@@ -42,7 +42,7 @@ make        # 编译，得到可执行文件 main
 ./main      # 运行可执行文件
 
 # 示例命令
-tree ../ > test.txt | cat < test.txt | grep main    
+ls -l -a ../ | grep .* | grep git* | grep ignore    
 ```
 结果如下所示：
 
@@ -83,7 +83,11 @@ tree ../ > test.txt | cat < test.txt | grep main
 	向服务器公共FIFO,写入msg,pro_num为3
 
 #### 2. 服务器端
-1. 打开公共fifo，阻塞等待读
+1. 打开公共fifo，阻塞等待读		
+
+	<font color=blue>公共fifo的文件名定义在 `include/MyProtocal.h` 中，使用前请先创建fifo</font>
+
+	`mkfifo fifoname`
     
 2. 读到内容字符串解析
     
