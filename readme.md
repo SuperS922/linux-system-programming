@@ -42,7 +42,7 @@ make        # 编译，得到可执行文件 main
 ./main      # 运行可执行文件
 
 # 示例命令
-tree ../ > test.txt | cat < test.txt | grep main    
+ls -l -a ../ | grep .* | grep git* | grep ignore    
 ```
 结果如下所示：
 
