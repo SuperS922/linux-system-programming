@@ -284,6 +284,7 @@ void MyClient::run()
             this->exitConnect();
             break;
         case 0:
+            this->exitConnect();
             exit(0);
             break;
         default:

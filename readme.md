@@ -45,4 +45,84 @@ make        # 编译，得到可执行文件 main
 tree ../ > test.txt | cat < test.txt | grep main    
 ```
 结果如下所示：
-![](result.png)
+
+![result](https://user-images.githubusercontent.com/32126755/128508953-a2d335af-a2ce-4891-933a-ba3a0ed12b52.png)
+
+
+### 三、本地聊天室
+代码在 `local-chat` 文件夹下，实现步骤：
+#### 1. 客户端
+ 1. 获取自己的 `room ID` 和 `friend's room ID`，填充 `MyProtocal` 结构体；
+
+ 2. 非阻塞属性创建私有FIFO；
+
+ 3. 打开服务器公共的FIFO,把自己的信息向服务器注册，私有FIFO的名称存储在结构体的 `data` 部分；
+
+ 4. 非阻塞读私有FIFO
+
+	read返回-1，继续轮询
+
+	read返回>0, 协议包解析
+
+	- pro_num为1，代表登陆请求包      (发向服务器)
+
+	- pro_num为2，代表连接成功包      (从服务器接收)
+
+    - pro_num为3，代表数据发送包      (发向服务器) | (从服务器接收)
+
+    - pro_num为4，代表客户不在线      (从服务器接收)
+
+    - pro_num为5，代表退出登陆        (发向服务器)
+
+ 5. 设置标准输入为非阻塞属性，读标准输入
+
+	read返回-1，继续轮询
+
+	read返回>1,字符串解析，填充struct c_msg
+
+	向服务器公共FIFO,写入msg,pro_num为3
+
+#### 2. 服务器端
+1. 打开公共fifo，阻塞等待读
+    
+2. 读到内容字符串解析
+    
+3. 判断协议号num
+
+	1. 用户注册
+
+		非阻塞写打开新用户创建的私有FIFO
+
+		增加在线列表节点
+            
+	2. 用户聊天
+
+		取出dst
+
+		中转数据给客户
+            
+    3. 用户退出
+
+        将用户从在线列表中摘除
+
+        关闭用户私有FIFO
+            
+4. 返回第一步1,继续阻塞在公共FIFO读等待
+
+#### 3. 编译命令
+
+```bash
+cd ./local-chat/
+
+g++ client.cpp src/MyClient.cpp -I include/ -o client
+
+g++ server.cpp src/MyServer.cpp -I include/ -o server
+```
+
+#### 4. 未完善功能
+- 客户端退出chat界面，虽然仍有连接，但不会显示收到的消息；
+- 服务器端没有打印输出信息；
+- 服务器端未设置输入特定字符结束，只能 `ctrl + c` 结束进程；
+- chat界面的信息显示分布不合理。
+
+懒的改了，等心情好的时候。。。
